@@ -1,0 +1,57 @@
+services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 80:80
+    volumes:
+      - ./laravel:/var/www/laravel
+      - ./nest:/var/www/nest
+      - ./nginx/conf:/etc/nginx/conf.d
+    networks:
+      - practical-di
+  laravel-runtime:
+    build:
+      context: ./laravel
+    networks:
+      - practical-di
+  nest-runtime:
+    build:
+      context: ./nest
+      target: development
+    volumes:
+      - ./nest:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    command: yarn start:dev
+    networks:
+      - practical-di
+  mariadb:
+    image: mariadb:10.6
+    ports:
+      - 33067:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "toor"
+      MYSQL_DATABASE: "practical-di"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "toor"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - practical-di-mariadb:/var/lib/mysql
+    networks:
+      - practical-di
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--user=root", "--password=toor"]
+
+networks:
+  practical-di:
+    driver: bridge
+    external: false
+    name: practical-di
+
+volumes:
+  practical-di-mariadb:
+    driver: local
