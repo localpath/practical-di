@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ExampleOneController;
+use App\Http\Controllers\ExampleThreeController;
+use App\Http\Controllers\ExampleTwoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +19,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/stock-prices', ExampleThreeController::class);
