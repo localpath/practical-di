@@ -1,25 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
-import { ETradeService } from './ETrade.service';
-import NasdaqService from './Nasdaq.service';
-import RobinHoodService, { SRobinHoodService } from './RobinHood.service';
+import stockServiceConfig from './config/stock-service.config';
+import StocksServiceModule from './services/stocks-service/StocksService.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      load: [stockServiceConfig],
     }),
+    StocksServiceModule,
   ],
   controllers: [AppController],
-  providers: [
-    ETradeService,
-    NasdaqService,
-    RobinHoodService,
-    {
-      provide: SRobinHoodService,
-      useClass: RobinHoodService,
-    },
-  ],
 })
 export class AppModule {}
